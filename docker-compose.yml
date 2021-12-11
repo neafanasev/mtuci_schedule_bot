@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "mypgdb"
+      POSTGRES_USER: "dbadmin"
+      POSTGRES_PASSWORD: "pass"
+    ports:
+      - "5434:5432"
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+
