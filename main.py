@@ -2,9 +2,10 @@ import telebot
 from telebot import types
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-# import re
 from datetime import date, timedelta
 from tokenT import token
+from helper_func import (num_of_current_week, get_day, start_time,
+                         subject_type, weekday)
 
 bot = telebot.TeleBot(token)
 conn = psycopg2.connect(database="schedule_bot",
@@ -28,54 +29,6 @@ b_this = types.InlineKeyboardButton(text='Эта неделя', callback_data='t
 b_next = types.InlineKeyboardButton(text='Следующая неделя', callback_data='n')
 keyboard.add(b_mon, b_tue, b_wed, b_thu, b_fri, b_sat, b_this, b_next)
 
-
-
-def num_of_current_week(cur_date):
-    current_week = cur_date.isocalendar()[1]
-    first_week = date(2021, 9, 1).isocalendar()[1]
-    return current_week - first_week
-
-def get_day(n, cur_date):
-    if num_of_current_week(cur_date) % 2 == 0:
-        return n
-    else:
-        return n+6
-
-def start_time(n):
-    if n == 0:
-        return '9:30-11:05'
-    elif n == 1:
-        return '11:20-12:55'
-    elif n == 2:
-        return '13:10-14:45'
-    elif n == 3:
-        return '15:25-17:00'
-    else:
-        return '17:15-18:50'
-
-def subject_type(n):
-    if n == 0:
-        return 'лек.'
-    elif n == 1:
-        return 'лаб.'
-    elif n == 2:
-        return 'пр. з.'
-    else:
-        return ''
-
-def weekday(n):
-    if n == 0:
-        return 'Понедельник'
-    elif n == 1:
-        return 'Вторник'
-    elif n == 2:
-        return 'Среда'
-    elif n == 3:
-        return 'Четверг'
-    elif n == 4:
-        return 'Пятница'
-    else:
-        return 'Суббота'
 
 def day_schedule(data, cur_date):
     query = f"SELECT timetable.subject, timetable.s_type, room_numb, start_time, full_name FROM public.timetable \
